@@ -55,6 +55,60 @@ app.post("/register", async (req, res) => {
   }
 });
 
+// "Login route"
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // "Check if email and password were sent"
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Please provide email and password",
+      });
+    }
+
+    // "Find user by email"
+    const userResult = await pool.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    // "If no user found, stop here"
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    const user = userResult.rows[0];
+
+    // "Compare entered password with hashed password in database"
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    // "If login is correct, send success response"
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error("Login route error:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+
 const PORT = 5000; 
 // "Port = where the server runs (like a door number)"
 app.listen(PORT, () => {
