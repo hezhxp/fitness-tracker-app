@@ -1,7 +1,9 @@
 const express = require("express"); // "Import Express - helps us build the backend server easily"
 const cors = require("cors"); // "Import CORS - allows frontend (app) to talk to backend"
 const bcrypt = require("bcrypt"); // "Import bcrypt to hash passwords"
+const jwt = require("jsonwebtoken"); // "Import JWT to create login tokens"
 const pool = require("./db"); // "Import database connection"
+require("dotenv").config(); // "Load environment variables"
 
 const app = express(); // "Create the backend server (our main app)"
 
@@ -90,10 +92,20 @@ app.post("/login", async (req, res) => {
         message: "Invalid email or password",
       });
     }
+    // "Create token"
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     // "If login is correct, send success response"
     res.status(200).json({
       message: "Login successful",
+      token: token,
       user: {
         id: user.id,
         name: user.name,
