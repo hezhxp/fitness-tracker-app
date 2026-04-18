@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt"); // "Import bcrypt to hash passwords"
 const jwt = require("jsonwebtoken"); // "Import JWT to create login tokens"
 const pool = require("./db"); // "Import database connection"
 require("dotenv").config(); // "Load environment variables"
+const authMiddleware = require("./middleware"); // "Import auth middleware"
 
 const app = express(); // "Create the backend server (our main app)"
 
@@ -114,6 +115,36 @@ app.post("/login", async (req, res) => {
     });
   } catch (error) {
     console.error("Login route error:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+
+// "Protected route"
+app.get("/profile", authMiddleware, async (req, res) => {
+  try {
+    // "req.user comes from the decoded JWT token"
+    const userId = req.user.userId;
+
+    const userResult = await pool.query(
+      "SELECT id, name, email, created_at FROM users WHERE id = $1",
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Protected profile route accessed successfully",
+      user: userResult.rows[0],
+    });
+  } catch (error) {
+    console.error("Profile route error:", error);
     res.status(500).json({
       message: "Server error",
       error: error.message,
