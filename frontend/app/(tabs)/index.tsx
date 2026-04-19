@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import {
   View,
@@ -15,25 +17,58 @@ export default function HomeScreen() {
   const [token, setToken] = useState("");
   const [userName, setUserName] = useState("");
 
+  useEffect(() => {
+  const loadToken = async () => {
+    const savedToken = await AsyncStorage.getItem("token");
+
+      if (savedToken) {
+        setToken(savedToken);
+        console.log("Token loaded from storage");
+      }
+    };
+
+    loadToken();
+  }, []);
+
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://192.168.0.18:5000/login", {
+      const response = await axios.post("http://192.168.0.8:5000/login", {
         email,
         password,
       });
 
-      setToken(response.data.token);
-      setUserName(response.data.user.name);
+      const token = response.data.token;
+      const user = response.data.user;
+
+        // "Save token to AsyncStorage"
+      await AsyncStorage.setItem("token", token);
+      setToken(token);
+      setUserName(user.name);
 
       Alert.alert("Success", "Login successful");
-      console.log("Login response:", response.data);
     } catch (error: any) {
-      console.log("Login error:", error?.response?.data || error.message);
-
       Alert.alert(
         "Login Failed",
-        error?.response?.data?.message || "Something went wrong"
+        error?.response?.data?.message || error.message || "Something went wrong"
       );
+    }
+  };
+
+  const getProfile = async () => {
+    try {
+      const savedToken = await AsyncStorage.getItem("token");
+
+      const res = await axios.get("http://192.168.0.8:5000/profile", {
+        headers: {
+          Authorization: `Bearer ${savedToken}`,
+        },
+      });
+
+      console.log("Profile:", res.data);
+      Alert.alert("Profile", res.data.user.name);
+    } catch (err: any) {
+      console.log(err?.response?.data || err.message);
+      Alert.alert("Error", "Could not fetch profile");
     }
   };
 
@@ -60,6 +95,10 @@ export default function HomeScreen() {
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={getProfile}>
+        <Text style={styles.buttonText}>Get Profile</Text>
       </TouchableOpacity>
 
       {userName ? (
