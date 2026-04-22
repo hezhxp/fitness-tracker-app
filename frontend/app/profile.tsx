@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.4:5000";
+import { API_URL } from "@/constants/api";
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<any>(null);

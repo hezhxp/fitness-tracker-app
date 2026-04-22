@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { router } from "expo-router";
 
-const API_URL = "http://192.168.0.4:5000";
+import { API_URL } from "@/constants/api";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
