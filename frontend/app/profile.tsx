@@ -15,6 +15,11 @@ type UserProfile = {
   id: number;
   name: string;
   email: string;
+  age?: number | null;
+  weight?: number | null;
+  height?: number | null;
+  goal?: string | null;
+  activity_level?: string | null;
   created_at?: string;
 };
 
@@ -57,6 +62,25 @@ export default function ProfileScreen() {
           <Text style={styles.label}>User ID</Text>
           <Text style={styles.value}>{user.id}</Text>
 
+          <Text style={styles.label}>Age</Text>
+          <Text style={styles.value}>{user.age ?? "Not set"}</Text>
+
+          <Text style={styles.label}>Weight</Text>
+          <Text style={styles.value}>
+            {user.weight !== null && user.weight !== undefined ? `${user.weight} kg` : "Not set"}
+          </Text>
+
+          <Text style={styles.label}>Height</Text>
+          <Text style={styles.value}>
+            {user.height !== null && user.height !== undefined ? `${user.height} cm` : "Not set"}
+          </Text>
+
+          <Text style={styles.label}>Goal</Text>
+          <Text style={styles.value}>{user.goal || "Not set"}</Text>
+
+          <Text style={styles.label}>Activity Level</Text>
+          <Text style={styles.value}>{user.activity_level || "Not set"}</Text>
+
           <Text style={styles.label}>Account Created</Text>
           <Text style={styles.value}>
             {user.created_at
@@ -67,6 +91,13 @@ export default function ProfileScreen() {
       ) : (
         <Text style={styles.loadingText}>Loading profile...</Text>
       )}
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/edit-profile")}
+      >
+        <Text style={styles.buttonText}>Edit Profile</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}

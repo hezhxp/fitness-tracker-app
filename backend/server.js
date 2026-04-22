@@ -129,7 +129,7 @@ app.get("/profile", authMiddleware, async (req, res) => {
     const userId = req.user.userId;
 
     const userResult = await pool.query(
-      "SELECT id, name, email, created_at FROM users WHERE id = $1",
+      "SELECT id, name, email, age, weight, height, goal, activity_level, created_at FROM users WHERE id = $1",
       [userId]
     );
 
@@ -145,6 +145,36 @@ app.get("/profile", authMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.error("Profile route error:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+
+app.put("/profile", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { age, weight, height, goal, activity_level } = req.body;
+
+    const updatedUser = await pool.query(
+      `UPDATE users
+       SET age = $1,
+           weight = $2,
+           height = $3,
+           goal = $4,
+           activity_level = $5
+       WHERE id = $6
+       RETURNING id, name, email, age, weight, height, goal, activity_level, created_at`,
+      [age, weight, height, goal, activity_level, userId]
+    );
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: updatedUser.rows[0],
+    });
+  } catch (error) {
+    console.error("Update profile error:", error);
     res.status(500).json({
       message: "Server error",
       error: error.message,
