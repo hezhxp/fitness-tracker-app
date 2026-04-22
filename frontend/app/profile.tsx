@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-
 import { API_URL } from "@/constants/api";
+import { router } from "expo-router";
+
+type UserProfile = {
+  id: number;
+  name: string;
+  email: string;
+  created_at?: string;
+};
 
 export default function ProfileScreen() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     const getProfile = async () => {
@@ -34,14 +47,33 @@ export default function ProfileScreen() {
       <Text style={styles.title}>Profile</Text>
 
       {user ? (
-        <>
-          <Text style={styles.text}>Name: {user.name}</Text>
-          <Text style={styles.text}>Email: {user.email}</Text>
-          <Text style={styles.text}>ID: {user.id}</Text>
-        </>
+        <View style={styles.card}>
+          <Text style={styles.label}>Name</Text>
+          <Text style={styles.value}>{user.name}</Text>
+
+          <Text style={styles.label}>Email</Text>
+          <Text style={styles.value}>{user.email}</Text>
+
+          <Text style={styles.label}>User ID</Text>
+          <Text style={styles.value}>{user.id}</Text>
+
+          <Text style={styles.label}>Account Created</Text>
+          <Text style={styles.value}>
+            {user.created_at
+              ? new Date(user.created_at).toLocaleDateString()
+              : "N/A"}
+          </Text>
+        </View>
       ) : (
-        <Text>Loading profile...</Text>
+        <Text style={styles.loadingText}>Loading profile...</Text>
       )}
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.replace("/home")}
+      >
+        <Text style={styles.buttonText}>Back to Home</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -49,18 +81,52 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: "#f7f7f7",
     padding: 20,
-    backgroundColor: "#fff",
+    justifyContent: "center",
   },
   title: {
-    fontSize: 28,
+    fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 30,
     textAlign: "center",
+    marginBottom: 25,
   },
-  text: {
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  label: {
+    fontSize: 14,
+    color: "#777",
+    marginTop: 10,
+  },
+  value: {
     fontSize: 18,
-    marginBottom: 10,
+    fontWeight: "600",
+    color: "#111",
+    marginTop: 4,
+  },
+  loadingText: {
+    textAlign: "center",
+    fontSize: 16,
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#111",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
