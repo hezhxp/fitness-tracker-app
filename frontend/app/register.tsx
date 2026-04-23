@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 import { router } from "expo-router";
 
-import { API_URL } from "@/constants/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function RegisterScreen() {
   const [name, setName] = useState("");

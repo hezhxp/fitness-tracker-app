@@ -10,7 +10,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { router } from "expo-router";
-import { API_URL } from "@/constants/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function EditProfileScreen() {
   const [age, setAge] = useState("");

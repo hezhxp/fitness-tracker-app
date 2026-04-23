@@ -1,4 +1,4 @@
 backend/node_modules/
 .env
 frontend/node_modules/
-frontend/constants/api.ts
+frontend/.env
