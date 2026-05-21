@@ -19,6 +19,13 @@ export default function HomeScreen() {
         <Text style={styles.buttonText}>Go to Profile</Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push("/routines")}
+      >
+        <Text style={styles.buttonText}>View Routines</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>

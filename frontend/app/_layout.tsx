@@ -17,6 +17,13 @@ export default function RootLayout() {
         <Stack.Screen name="home" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="edit-profile" />
+        <Stack.Screen name="create-routine" />
+        <Stack.Screen name="routine" />
+        <Stack.Screen name="exercise" />
+        <Stack.Screen name="routines" />
+        <Stack.Screen name="routine-details" />
+        <Stack.Screen name="add-routine-exercises" />
+        <Stack.Screen name="active-workout" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
